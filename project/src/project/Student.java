@@ -57,9 +57,7 @@ public class Student {
     public String toString() {
         return "ID: " + id +
                ", " + name + " " + surname +
-               ", Obor: " + group +
                ", Datum narození: " + birthday.getDayOfMonth() +"." + birthday.getMonthValue() + "." + birthday.getYear() +
-               ", Známky: " + grades +
                ", Průměr: " + String.format("%.2f", averageGrade());
     }
 	 

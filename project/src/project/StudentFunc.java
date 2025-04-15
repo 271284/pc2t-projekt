@@ -2,13 +2,15 @@ package project;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
 public class StudentFunc {
+	private int nextId = 1;
 	private Scanner scanner = new Scanner(System.in);
 	private List<Student> students = new ArrayList<>();
-
+	
     public void addStudent() {
     	System.out.print("Zadej jméno: ");
         String name = scanner.nextLine();
@@ -31,11 +33,16 @@ public class StudentFunc {
             return;
         }
 
-        int newId = students.size() + 1;
-        Student newStudent = new Student(newId, name, surname, birthday, new ArrayList<>(), group);
+        Student newStudent = new Student(nextId++, name, surname, birthday, new ArrayList<>(), group);
         students.add(newStudent);
 
         System.out.println("Student úspěšně přidán:");
+    }
+    
+    public void addSampleStudents() {
+        students.add(new Student(nextId++, "Jan", "Novák", LocalDate.of(2003, 5, 12), new ArrayList<>(List.of(1, 2, 3)), StudyGroup.KYBERBEZPECNOST));
+        students.add(new Student(nextId++, "Petra", "Svobodová", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST));
+        students.add(new Student(nextId++, "Lukáš", "Dvořák", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE));
     }
 
     private LocalDate parseDate(String dateOfBirth) {
@@ -74,6 +81,83 @@ public class StudentFunc {
         } catch (NumberFormatException ignored) {}
 
         return null;
+	}
+	
+	public void addGradeToStudent() {
+	    System.out.print("Zadej ID studenta: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    Student student = null;
+	    for (Student s : students) {
+	        if (s.getId() == id) {
+	            student = s;
+	            break;
+	        }
+	    }
+
+	    if (student == null) {
+	        System.out.println("Student s daným ID neexistuje.");
+	        return;
+	    }
+
+	    System.out.print("Zadej známku (1 - 5): ");
+	    int grade;
+	    try {
+	        grade = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatná známka.");
+	        return;
+	    }
+
+	    student.setGrade(grade);
+	    System.out.println("Známka byla úspěšně přidána");
+	}
+	
+	public void removeStudent() {
+	    System.out.print("Zadej ID studenta, kterého chceš odstranit: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    Iterator<Student> iterator = students.iterator();
+	    while (iterator.hasNext()) {
+	        Student student = iterator.next();
+	        if (student.getId() == id) {
+	            iterator.remove();
+	            System.out.println("Student byl úspěšně propuštěn.");
+	            return;
+	        }
+	    }
+	}
+	
+	public void printStudentById() {
+	    System.out.print("Zadej ID studenta: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    for (Student s : students) {
+	        if (s.getId() == id) {
+	        	System.out.println(s);
+	            return;
+	        }
+	    }
+
+	    System.out.println("Student s ID " + id + " nebyl nalezen.");
 	}
 
     public void printAllStudents() {
