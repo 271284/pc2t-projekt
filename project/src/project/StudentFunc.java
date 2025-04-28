@@ -2,8 +2,11 @@ package project;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class StudentFunc {
@@ -32,17 +35,24 @@ public class StudentFunc {
             System.out.println("Neplatná volba skupiny.");
             return;
         }
+        
+        Skill skill = null;
+        if (group == StudyGroup.TELEKOMUNIKACE) {
+            skill = new MorseSkill();
+        } else if (group == StudyGroup.KYBERBEZPECNOST) {
+            skill = new HashSkill();
+        }
 
-        Student newStudent = new Student(nextId++, name, surname, birthday, new ArrayList<>(), group);
+        Student newStudent = new Student(nextId++, name, surname, birthday, new ArrayList<>(), group, skill);
         students.add(newStudent);
 
-        System.out.println("Student úspěšně přidán:");
+        System.out.println("Student úspěšně přidán.");
     }
     
     public void addSampleStudents() {
-        students.add(new Student(nextId++, "Jan", "Novák", LocalDate.of(2003, 5, 12), new ArrayList<>(List.of(1, 2, 3)), StudyGroup.KYBERBEZPECNOST));
-        students.add(new Student(nextId++, "Petra", "Svobodová", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST));
-        students.add(new Student(nextId++, "Lukáš", "Dvořák", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE));
+        students.add(new Student(nextId++, "Jan", "Novák", LocalDate.of(2003, 5, 12), new ArrayList<>(List.of(1, 2, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
+        students.add(new Student(nextId++, "Petra", "Svobodová", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
+        students.add(new Student(nextId++, "Lukáš", "Dvořák", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE, new MorseSkill()));
     }
 
     private LocalDate parseDate(String dateOfBirth) {
@@ -116,7 +126,7 @@ public class StudentFunc {
 	    }
 
 	    student.setGrade(grade);
-	    System.out.println("Známka byla úspěšně přidána");
+	    System.out.println("Známka byla úspěšně přidána.");
 	}
 	
 	public void removeStudent() {
@@ -158,6 +168,59 @@ public class StudentFunc {
 	    }
 
 	    System.out.println("Student s ID " + id + " nebyl nalezen.");
+	}
+	
+	public void activateSkillById() {
+	    System.out.print("Zadej ID studenta: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    Student student = null;
+	    for (Student s : students) {
+	        if (s.getId() == id) {
+	            student = s;
+	            break;
+	        }
+	    }
+
+	    if (student == null) {
+	        System.out.println("Student s daným ID neexistuje.");
+	        return;
+	    }
+
+	    if (student.getSkill() != null) {
+	        student.getSkill().execute(student);
+	    } else {
+	        System.out.println("Student nemá přiřazenou žádnou dovednost.");
+	    }
+	}
+	
+	public void printStudentsByGroup() {
+	    Map<StudyGroup, List<Student>> studyGroup = new HashMap<>();
+
+	    for (Student student : students) {
+	        StudyGroup group = student.getGroup();
+	        if (!studyGroup.containsKey(group)) {
+	        	studyGroup.put(group, new ArrayList<>());
+	        }
+	        studyGroup.get(group).add(student);
+	    }
+
+	    for (StudyGroup group : studyGroup.keySet()) {
+	        System.out.println("\nSkupina: " + group);
+
+	        List<Student> studentsInGroup = studyGroup.get(group);
+	        studentsInGroup.sort(Comparator.comparing(Student::getSurname, String.CASE_INSENSITIVE_ORDER));
+
+	        for (Student student : studentsInGroup) {
+	            System.out.println(student);
+	        }
+	    }
 	}
 
     public void printAllStudents() {

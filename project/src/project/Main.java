@@ -16,7 +16,9 @@ public class Main {
             System.out.println("2. Přidat známku studentovi");
             System.out.println("3. Propustit studenta");
             System.out.println("4. Zobrazit studenta dle ID");
-            System.out.println("5. Zobrazit všechny studenty");
+            System.out.println("5. Spustit dovednost studenta dle ID");
+            System.out.println("6. Zobrazit studenty dle skupiny");
+            System.out.println("7. Zobrazit všechny studenty");
             System.out.println("0. Konec");
 
             System.out.print("Vyber akci: ");
@@ -36,6 +38,12 @@ public class Main {
                 	student.printStudentById();
                 	break;
                 case "5":
+                	student.activateSkillById();
+                    break;
+                case "6":
+                	student.printStudentsByGroup();
+                    break;
+                case "7":
                 	student.printAllStudents();
                     break;
                 case "0":

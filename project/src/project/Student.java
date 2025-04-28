@@ -10,9 +10,10 @@ public class Student {
 	 private LocalDate birthday;
 	 private List<Integer> grades;
 	 private StudyGroup group;
+	 private Skill skill;
 	 
 
-	public Student(int id, String name, String surname, LocalDate birthday, List<Integer> grades, StudyGroup group) {
+	public Student(int id, String name, String surname, LocalDate birthday, List<Integer> grades, StudyGroup group, Skill skill) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -20,6 +21,15 @@ public class Student {
 		this.birthday = birthday;
 		this.grades = grades;
 		this.group = group;
+		this.skill = skill;
+	}
+
+	public Skill getSkill() {
+		return skill;
+	}
+
+	public void setSkill(Skill skill) {
+		this.skill = skill;
 	}
 
 	public List<Integer> getGrade() {
@@ -40,6 +50,14 @@ public class Student {
 
 	public LocalDate getBirthday() {
 		return birthday;
+	}
+
+	public StudyGroup getGroup() {
+		return group;
+	}
+
+	public void setGroup(StudyGroup group) {
+		this.group = group;
 	}
 
 	public void setGrade(int grade) {
