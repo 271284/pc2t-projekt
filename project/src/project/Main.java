@@ -18,7 +18,9 @@ public class Main {
             System.out.println("4. Zobrazit studenta dle ID");
             System.out.println("5. Spustit dovednost studenta dle ID");
             System.out.println("6. Zobrazit studenty dle skupiny");
-            System.out.println("7. Zobrazit všechny studenty");
+            System.out.println("7. Zobrazit obecný studijní průmer v oborech");
+            System.out.println("8. Vypísat celkový počet studentů v jednotlivých skupinách");
+            System.out.println("9. Zobrazit všechny studenty");
             System.out.println("0. Konec");
 
             System.out.print("Vyber akci: ");
@@ -44,6 +46,12 @@ public class Main {
                 	student.printStudentsByGroup();
                     break;
                 case "7":
+                	student.printAverageGrade();
+                    break;
+                case "8":
+                	student.printStundentsInGroup();;
+                    break;
+                case "9":
                 	student.printAllStudents();
                     break;
                 case "0":

@@ -51,8 +51,8 @@ public class StudentFunc {
     
     public void addSampleStudents() {
         students.add(new Student(nextId++, "Jan", "Novák", LocalDate.of(2003, 5, 12), new ArrayList<>(List.of(1, 2, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
-        students.add(new Student(nextId++, "Petra", "Svobodová", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
-        students.add(new Student(nextId++, "Lukáš", "Dvořák", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE, new MorseSkill()));
+        students.add(new Student(nextId++, "Petra", "Uličná", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
+        students.add(new Student(nextId++, "Lukáš", "Petrásek", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE, new MorseSkill()));
     }
 
     private LocalDate parseDate(String dateOfBirth) {
@@ -220,6 +220,58 @@ public class StudentFunc {
 	        for (Student student : studentsInGroup) {
 	            System.out.println(student);
 	        }
+	    }
+	}
+	
+	public void printAverageGrade() {
+	    Map<StudyGroup, List<Student>> studyGroup = new HashMap<>();
+
+	    for (Student student : students) {
+	    	StudyGroup group = student.getGroup();
+	    	if (!studyGroup.containsKey(group)) {
+	        	studyGroup.put(group, new ArrayList<>());
+	        }
+	    	studyGroup.get(group).add(student);
+	    }
+
+
+	    for (StudyGroup group : StudyGroup.values()) {
+	        List<Student> studentsInGroup = studyGroup.get(group);
+
+	        if (studentsInGroup == null || studentsInGroup.isEmpty()) {
+	            System.out.println(group + ": žádní studenti");
+	            continue;
+	        }
+
+	        double totalSum = 0;
+	        int totalCount = 0;
+	        for (Student student : studentsInGroup) {
+	            for (int grade : student.getGrade()) {
+	                totalSum += grade;
+	                totalCount++;
+	            }
+	        }
+
+	        double average = totalCount > 0 ? totalSum / totalCount : 0.0;
+	        System.out.printf("%s: %.2f\n", group, average);
+	    }
+	}
+	
+	public void printStundentsInGroup() {
+		Map<StudyGroup, Integer> groupSize = new HashMap<>();
+
+	    for (Student student : students) {
+	    	StudyGroup group = student.getGroup();
+	    	if (!groupSize.containsKey(group)) {
+	    		groupSize.put(group, 1);
+	        } else {
+	        	groupSize.put(group, groupSize.get(group) + 1);
+	        }
+	    }
+	    	
+	    for (StudyGroup group : StudyGroup.values()) {
+	        int count = groupSize.getOrDefault(group, 0);
+	        System.out.println(group + ": " + count);
 	    }
 	}
 
