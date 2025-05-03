@@ -1,5 +1,10 @@
 package project;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -8,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class StudentFunc {
 	private int nextId = 1;
@@ -50,7 +56,6 @@ public class StudentFunc {
     }
     
     public void addSampleStudents() {
-        students.add(new Student(nextId++, "Jan", "Novák", LocalDate.of(2003, 5, 12), new ArrayList<>(List.of(1, 2, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
         students.add(new Student(nextId++, "Petra", "Uličná", LocalDate.of(2004, 8, 22), new ArrayList<>(List.of(2, 2, 1, 3)), StudyGroup.KYBERBEZPECNOST, new HashSkill()));
         students.add(new Student(nextId++, "Lukáš", "Petrásek", LocalDate.of(2002, 11, 3), new ArrayList<>(List.of(3, 4)), StudyGroup.TELEKOMUNIKACE, new MorseSkill()));
     }
@@ -130,7 +135,7 @@ public class StudentFunc {
 	}
 	
 	public void removeStudent() {
-	    System.out.print("Zadej ID studenta, kterého chceš odstranit: ");
+	    System.out.print("Zadej ID studenta, kterého chceš propustit: ");
 	    int id;
 	    try {
 	        id = Integer.parseInt(scanner.nextLine());
@@ -272,6 +277,129 @@ public class StudentFunc {
 	    for (StudyGroup group : StudyGroup.values()) {
 	        int count = groupSize.getOrDefault(group, 0);
 	        System.out.println(group + ": " + count);
+	    }
+	}
+	
+	public void saveStudentToFile() {
+	    System.out.print("Zadej ID studenta: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    Student student = null;
+	    for (Student s : students) {
+	        if (s.getId() == id) {
+	            student = s;
+	            break;
+	        }
+	    }
+
+	    if (student == null) {
+	        System.out.println("Student s daným ID neexistuje.");
+	        return;
+	    }
+
+	    String fileName = "student" + student.getId() + ".txt";
+
+	    try (FileWriter writer = new FileWriter(fileName)) {
+	        writer.write("ID: " + student.getId() + "\n");
+	        writer.write("Jméno: " + student.getName() + "\n");
+	        writer.write("Příjmení: " + student.getSurname() + "\n");
+	        writer.write("Datum narození: " + student.getBirthday().getDayOfMonth() + "." + student.getBirthday().getMonthValue() + "." + student.getBirthday().getYear() + "\n");
+	        writer.write("Skupina: " + student.getGroup() + "\n");
+	        writer.write("Známky: " + student.getGrade().stream().map(String::valueOf).collect(Collectors.joining(", ")) + "\n");
+	        writer.write("Průměr: " + String.format("%.2f", student.averageGrade()) + "\n");
+	        System.out.println("Student byl úspěšně uložen do souboru.");
+	    } catch (IOException e) {
+	        System.out.println("Chyba při zápisu do souboru: " + e.getMessage());
+	    }
+	}
+	
+	public void loadStudentFromFile() {
+	    System.out.print("Zadej ID studenta: ");
+	    int id;
+	    try {
+	        id = Integer.parseInt(scanner.nextLine());
+	    } catch (NumberFormatException e) {
+	        System.out.println("Neplatné ID.");
+	        return;
+	    }
+
+	    String fileName = "student" + id + ".txt";
+	    File file = new File(fileName);
+
+	    if (!file.exists()) {
+	        System.out.println("Soubor se studentem s daným ID neexistuje.");
+	        return;
+	    }
+	    
+	    Student student = null;
+	    for (Student s : students) {
+	        if (s.getId() == id) {
+	        	System.out.println("Student s daným ID již existuje.\nChceš ho nahradit? (A/N)");
+	        	String replace = scanner.nextLine().trim().toUpperCase();
+	        	
+	        	if(replace.equals("A")) {
+	        		Iterator<Student> iterator = students.iterator();
+	        	    while (iterator.hasNext()) {
+	        	        student = iterator.next();
+	        	        if (student.getId() == id) {
+	        	            iterator.remove();
+	        	            iterator.next();
+	        	            break;
+	        	        }
+	        	    }
+	        	} else {
+	        		id = nextId++;
+	        	}
+	        }
+	    }
+
+	    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+	        String name = null;
+	        String surname = null;
+	        LocalDate birthday = null;
+	        List<Integer> grades = new ArrayList<>();
+	        StudyGroup group = null;
+
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            if (line.startsWith("Jméno: ")) {
+	                name = line.substring(7).trim();
+	            } else if (line.startsWith("Příjmení: ")) {
+	                surname = line.substring(10).trim();
+	            } else if (line.startsWith("Datum narození: ")) {
+	                String[] bday = line.substring(16).split("\\.");
+	                int day = Integer.parseInt(bday[0]);
+	                int month = Integer.parseInt(bday[1]);
+	                int year = Integer.parseInt(bday[2]);
+	                birthday = LocalDate.of(year, month, day);
+	            } else if (line.startsWith("Známky: ")) {
+	                String[] gradeStrings = line.substring(8).split(", ");
+	                for (String grade : gradeStrings) {
+	                    grades.add(Integer.parseInt(grade.trim()));
+	                }
+	            } else if (line.startsWith("Skupina: ")) {
+	                String groupName = line.substring(9).trim();
+	                group = StudyGroup.valueOf(groupName);
+	            }
+	        }
+
+	        if (name != null && surname != null && birthday != null && group != null) {
+	            Skill skill = (group == StudyGroup.KYBERBEZPECNOST) ? new HashSkill() : new MorseSkill();
+	            student = new Student(id, name, surname, birthday, grades, group, skill);
+	            students.add(student);
+	            System.out.println("Student úspěšně načten a přidán do seznamu.");
+	        } else {
+	            System.out.println("Soubor neobsahuje všechna potřebná data.");
+	        }
+	        
+	    } catch (IOException | IllegalArgumentException e) {
+	        System.out.println("Chyba při načítání studenta: " + e.getMessage());
 	    }
 	}
 

@@ -20,7 +20,9 @@ public class Main {
             System.out.println("6. Zobrazit studenty dle skupiny");
             System.out.println("7. Zobrazit obecný studijní průmer v oborech");
             System.out.println("8. Vypísat celkový počet studentů v jednotlivých skupinách");
-            System.out.println("9. Zobrazit všechny studenty");
+            System.out.println("9. Uložit studenta do souboru dle ID");
+            System.out.println("10. Načíst studenta ze souboru dle ID");
+            System.out.println("11. Zobrazit všechny studenty");
             System.out.println("0. Konec");
 
             System.out.print("Vyber akci: ");
@@ -52,6 +54,16 @@ public class Main {
                 	student.printStundentsInGroup();;
                     break;
                 case "9":
+                	student.saveStudentToFile();
+                    break;
+                case "10":
+                	try {
+                		student.loadStudentFromFile();
+                	} catch (Exception e) {
+                		System.out.println("Studenta nebylo možné načíst.");
+                	}
+                    break;
+                case "11":
                 	student.printAllStudents();
                     break;
                 case "0":
