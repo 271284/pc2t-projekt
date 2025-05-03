@@ -20,6 +20,11 @@ public class StudentFunc {
 	private Scanner scanner = new Scanner(System.in);
 	private List<Student> students = new ArrayList<>();
 	
+	
+	public List<Student> getStudents() {
+	    return students;
+	}
+	
     public void addStudent() {
     	System.out.print("Zadej jméno: ");
         String name = scanner.nextLine();
@@ -149,6 +154,7 @@ public class StudentFunc {
 	        Student student = iterator.next();
 	        if (student.getId() == id) {
 	            iterator.remove();
+	            DatabaseManager.deleteStudent(id);
 	            System.out.println("Student byl úspěšně propuštěn.");
 	            return;
 	        }
@@ -199,7 +205,7 @@ public class StudentFunc {
 	    }
 
 	    if (student.getSkill() != null) {
-	        student.getSkill().execute(student);
+	        student.getSkill().applySkill(student);
 	    } else {
 	        System.out.println("Student nemá přiřazenou žádnou dovednost.");
 	    }
@@ -393,7 +399,7 @@ public class StudentFunc {
 	            Skill skill = (group == StudyGroup.KYBERBEZPECNOST) ? new HashSkill() : new MorseSkill();
 	            student = new Student(id, name, surname, birthday, grades, group, skill);
 	            students.add(student);
-	            System.out.println("Student úspěšně načten a přidán do seznamu.");
+	            System.out.println("Student úspěšně načten.");
 	        } else {
 	            System.out.println("Soubor neobsahuje všechna potřebná data.");
 	        }
@@ -401,6 +407,18 @@ public class StudentFunc {
 	    } catch (IOException | IllegalArgumentException e) {
 	        System.out.println("Chyba při načítání studenta: " + e.getMessage());
 	    }
+	}
+	
+	public void loadStudentsFromDatabase() {
+	    this.students = DatabaseManager.loadStudents();
+
+	    for (Student s : students) {
+	        if (s.getId() >= nextId) {
+	            nextId = s.getId() + 1;
+	        }
+	    }
+
+	    System.out.println("Studenti byli načteni z databáze.");
 	}
 
     public void printAllStudents() {

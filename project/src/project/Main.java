@@ -8,8 +8,12 @@ public class Main {
 	public static void main(String[] args) {
 		boolean run = true;
 		StudentFunc student = new StudentFunc();
+		student.loadStudentsFromDatabase();
+		DatabaseManager.initializeDatabase();
 		
-		student.addSampleStudents();
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		    DatabaseManager.saveStudents(student.getStudents());
+		}));
 		while (run) {
             System.out.println("\n--- MENU ---");
             System.out.println("1. Přidat nového studenta");
@@ -26,9 +30,9 @@ public class Main {
             System.out.println("0. Konec");
 
             System.out.print("Vyber akci: ");
-            String volba = scanner.nextLine();
+            String choice = scanner.nextLine();
 
-            switch (volba) {
+            switch (choice) {
                 case "1":
                 	student.addStudent();
                     break;
