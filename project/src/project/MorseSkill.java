@@ -6,14 +6,15 @@ import java.util.Map;
 public class MorseSkill implements Skill {
 
     @Override
-    public void execute(Student student) {
+    public void applySkill(Student student) {
         System.out.println("Morseova abeceda jména a příjmení:");
         String text = student.getName() + " " + student.getSurname();
         System.out.println(toMorse(text));
     }
 
-    private String toMorse(String text) {
-        Map<Character, String> morseCode = new HashMap<>();
+    private static final Map<Character, String> morseCode = new HashMap<>();
+
+    static {
         morseCode.put('A', ".-"); morseCode.put('B', "-...");
         morseCode.put('C', "-.-."); morseCode.put('D', "-..");
         morseCode.put('E', "."); morseCode.put('F', "..-.");
@@ -27,13 +28,24 @@ public class MorseSkill implements Skill {
         morseCode.put('U', "..-"); morseCode.put('V', "...-");
         morseCode.put('W', ".--"); morseCode.put('X', "-..-");
         morseCode.put('Y', "-.--"); morseCode.put('Z', "--..");
+        morseCode.put(' ', " ");
+    }
 
+    private String removeDiacritics(String text) {
+        return text.toUpperCase()
+                   .replace("Á", "A").replace("Č", "C").replace("Ď", "D")
+                   .replace("É", "E").replace("Ě", "E").replace("Í", "I")
+                   .replace("Ĺ", "L").replace("Ľ", "L").replace("Ň", "N")
+                   .replace("Ó", "O").replace("Ô", "O").replace("Ř", "R")
+                   .replace("Ŕ", "R").replace("Š", "S").replace("Ť", "T")
+                   .replace("Ú", "U").replace("Ů", "U").replace("Ý", "Y").replace("Ž", "Z");
+    }
+
+    private String toMorse(String text) {
         StringBuilder sb = new StringBuilder();
-        text = text.toUpperCase();
+        text = removeDiacritics(text);
         for (char c : text.toCharArray()) {
-            if (morseCode.containsKey(c)) {
-                sb.append(morseCode.get(c)).append(" ");
-            }
+            sb.append(morseCode.getOrDefault(c, "?")).append(" ");
         }
         return sb.toString().trim();
     }

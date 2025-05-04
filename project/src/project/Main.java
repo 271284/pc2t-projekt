@@ -55,7 +55,7 @@ public class Main {
                 	student.printAverageGrade();
                     break;
                 case "8":
-                	student.printStundentsInGroup();;
+                	student.numberOfStudentsInGroup();
                     break;
                 case "9":
                 	student.saveStudentToFile();

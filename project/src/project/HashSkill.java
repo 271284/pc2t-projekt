@@ -6,7 +6,7 @@ import java.security.NoSuchAlgorithmException;
 public class HashSkill implements Skill {
 
     @Override
-    public void execute(Student student) {
+    public void applySkill(Student student) {
         System.out.println("Hash jména a příjmení:");
         String text = student.getName() + " " + student.getSurname();
         System.out.println(toHash(text));

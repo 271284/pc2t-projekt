@@ -14,7 +14,6 @@ public class Student {
 	 
 
 	public Student(int id, String name, String surname, LocalDate birthday, List<Integer> grades, StudyGroup group, Skill skill) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
@@ -32,7 +31,7 @@ public class Student {
 		this.skill = skill;
 	}
 
-	public List<Integer> getGrade() {
+	public List<Integer> getGrades() {
 		return grades;
 	}
 	
@@ -60,9 +59,10 @@ public class Student {
 		this.group = group;
 	}
 
-	public void setGrade(int grade) {
+	public void setGrades(int grade) {
 		if (grade < 1 || grade > 5) {
 			System.out.println("Známka od 1 do 5");
+			return;
 		}
 		grades.add(grade);
 	}

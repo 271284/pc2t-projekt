@@ -28,16 +28,24 @@ public class StudentFunc {
     public void addStudent() {
     	System.out.print("Zadej jméno: ");
         String name = scanner.nextLine();
+        if (!name.matches("[\\p{L}]+([ '-][\\p{L}]+)*")) {
+            System.out.println("Neplatné jméno.\nMůže obsahovat pouze písmena, mezery, apostrof nebo spojovník.");
+            return;
+        }
 
         System.out.print("Zadej příjmení: ");
         String surname = scanner.nextLine();
+        if (!surname.matches("[\\p{L}]+([ '-][\\p{L}]+)*")) {
+            System.out.println("Neplatné příjmení.\nMůže obsahovat pouze písmena, mezery, apostrof nebo spojovník.");
+            return;
+        }
 
         System.out.print("Zadej datum narození (DD.MM.YYYY): ");
         String dateOfBirth = scanner.nextLine();
 
         LocalDate birthday = parseDate(dateOfBirth);
         if (birthday == null) {
-            System.out.println("Neplatný datum. Operace zrušena.");
+            System.out.println("Neplatný datum.");
             return;
         }
 
@@ -130,12 +138,16 @@ public class StudentFunc {
 	    int grade;
 	    try {
 	        grade = Integer.parseInt(scanner.nextLine());
+	        if (grade < 1 || grade > 5) {
+	            System.out.println("Známka musí být v rozmezí 1 až 5.");
+	            return;
+	        }
 	    } catch (NumberFormatException e) {
 	        System.out.println("Neplatná známka.");
 	        return;
 	    }
 
-	    student.setGrade(grade);
+	    student.setGrades(grade);
 	    System.out.println("Známka byla úspěšně přidána.");
 	}
 	
@@ -224,7 +236,6 @@ public class StudentFunc {
 
 	    for (StudyGroup group : studyGroup.keySet()) {
 	        System.out.println("\nSkupina: " + group);
-
 	        List<Student> studentsInGroup = studyGroup.get(group);
 	        studentsInGroup.sort(Comparator.comparing(Student::getSurname, String.CASE_INSENSITIVE_ORDER));
 
@@ -257,18 +268,17 @@ public class StudentFunc {
 	        double totalSum = 0;
 	        int totalCount = 0;
 	        for (Student student : studentsInGroup) {
-	            for (int grade : student.getGrade()) {
+	            for (int grade : student.getGrades()) {
 	                totalSum += grade;
 	                totalCount++;
 	            }
 	        }
-
 	        double average = totalCount > 0 ? totalSum / totalCount : 0.0;
 	        System.out.printf("%s: %.2f\n", group, average);
 	    }
 	}
 	
-	public void printStundentsInGroup() {
+	public void numberOfStudentsInGroup() {
 		Map<StudyGroup, Integer> groupSize = new HashMap<>();
 
 	    for (Student student : students) {
@@ -317,7 +327,7 @@ public class StudentFunc {
 	        writer.write("Příjmení: " + student.getSurname() + "\n");
 	        writer.write("Datum narození: " + student.getBirthday().getDayOfMonth() + "." + student.getBirthday().getMonthValue() + "." + student.getBirthday().getYear() + "\n");
 	        writer.write("Skupina: " + student.getGroup() + "\n");
-	        writer.write("Známky: " + student.getGrade().stream().map(String::valueOf).collect(Collectors.joining(", ")) + "\n");
+	        writer.write("Známky: " + student.getGrades().stream().map(String::valueOf).collect(Collectors.joining(", ")) + "\n");
 	        writer.write("Průměr: " + String.format("%.2f", student.averageGrade()) + "\n");
 	        System.out.println("Student byl úspěšně uložen do souboru.");
 	    } catch (IOException e) {
@@ -355,7 +365,6 @@ public class StudentFunc {
 	        	        student = iterator.next();
 	        	        if (student.getId() == id) {
 	        	            iterator.remove();
-	        	            iterator.next();
 	        	            break;
 	        	        }
 	        	    }

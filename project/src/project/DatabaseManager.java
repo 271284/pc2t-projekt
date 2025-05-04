@@ -40,7 +40,7 @@ public class DatabaseManager {
                 pstmt.setString(2, s.getName());
                 pstmt.setString(3, s.getSurname());
                 pstmt.setString(4, s.getBirthday().toString());
-                pstmt.setString(5, s.getGrade().toString().replaceAll("[\\[\\]]", ""));
+                pstmt.setString(5, s.getGrades().toString().replaceAll("[\\[\\]]", ""));
                 pstmt.setString(6, s.getGroup().name());
                 pstmt.setString(7, s.getSkill() != null ? s.getSkill().getClass().getSimpleName() : null);
                 pstmt.addBatch();
@@ -92,7 +92,7 @@ public class DatabaseManager {
     }
     
     public static void deleteStudent(int id) {
-        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:students.db");
+        try (Connection conn = DriverManager.getConnection(URL);
              PreparedStatement pstmt = conn.prepareStatement("DELETE FROM students WHERE id = ?")) {
 
             pstmt.setInt(1, id);
